@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" spacing="10">
+    <Label text="Управление пользователями" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="searchField" promptText="Поиск пользователей..." style="-fx-pref-width: 300;"/>
+        <Button text="Найти" onAction="#handleSearch"/>
+        <Button fx:id="addButton" text="Добавить" onAction="#handleAddUser"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button fx:id="editButton" text="Редактировать" onAction="#handleEditUser"
+                style="-fx-background-color: #2196F3; -fx-text-fill: white;" disable="true"/>
+        <Button fx:id="toggleActiveButton" text="Деактивировать" onAction="#handleToggleActive"
+                style="-fx-background-color: #FF9800; -fx-text-fill: white;" disable="true"/>
+    </HBox>
+
+    <TableView fx:id="usersTable" style="-fx-pref-height: 400;">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" style="-fx-pref-width: 50;"/>
+            <TableColumn fx:id="usernameColumn" text="Логин" style="-fx-pref-width: 150;"/>
+            <TableColumn fx:id="fullNameColumn" text="ФИО" style="-fx-pref-width: 200;"/>
+            <TableColumn fx:id="roleColumn" text="Роль" style="-fx-pref-width: 100;"/>
+            <TableColumn fx:id="phoneColumn" text="Телефон" style="-fx-pref-width: 150;"/>
+            <TableColumn fx:id="activeColumn" text="Активен" style="-fx-pref-width: 80;"/>
+        </columns>
+    </TableView>
+</VBox>
