@@ -15,10 +15,13 @@ public class User {
     private boolean active;
     private LocalDateTime createdAt;
 
+    // Конструкторы
     public User() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public User(String username, String password, String fullName, Role role) {
+        this();
         this.username = username;
         this.password = password;
         this.fullName = fullName;
@@ -91,6 +94,7 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    // Переопределенные методы Object
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

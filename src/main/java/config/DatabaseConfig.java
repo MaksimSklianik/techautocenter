@@ -13,24 +13,110 @@ public class DatabaseConfig {
     // SQL для создания таблиц
     private static final String[] CREATE_TABLES_SQL = {
             // Таблица пользователей
-
+            """
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        full_name TEXT NOT NULL,
+        phone TEXT,
+        role TEXT NOT NULL,
+        active BOOLEAN DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """,
 
             // Таблица записей сервиса
-
+            """
+    CREATE TABLE IF NOT EXISTS service_records (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date DATE NOT NULL,
+        client_name TEXT NOT NULL,
+        client_phone TEXT NOT NULL,
+        car_model TEXT NOT NULL,
+        license_plate TEXT,
+        service_type TEXT NOT NULL,
+        description TEXT,
+        cost REAL NOT NULL,
+        status TEXT NOT NULL DEFAULT 'Новая',
+        assigned_mechanic_id INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (assigned_mechanic_id) REFERENCES users(id)
+    )
+    """,
 
             // Таблица запчастей
-
+            """
+    CREATE TABLE IF NOT EXISTS spare_parts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        code TEXT NOT NULL UNIQUE,
+        description TEXT,
+        compatible_models TEXT,
+        quantity INTEGER NOT NULL DEFAULT 0,
+        price REAL NOT NULL,
+        supplier TEXT,
+        min_quantity INTEGER DEFAULT 5,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """,
 
             // Таблица расписания работ
-
+            """
+    CREATE TABLE IF NOT EXISTS work_schedules (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        mechanic_id INTEGER NOT NULL,
+        record_id INTEGER NOT NULL,
+        start_time TIMESTAMP NOT NULL,
+        end_time TIMESTAMP NOT NULL,
+        status TEXT NOT NULL DEFAULT 'Запланировано',
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (mechanic_id) REFERENCES users(id),
+        FOREIGN KEY (record_id) REFERENCES service_records(id),
+        CHECK (end_time > start_time)
+    )
+    """,
 
             // Таблица использования запчастей
-
-
+            """
+    CREATE TABLE IF NOT EXISTS parts_usage (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        record_id INTEGER NOT NULL,
+        part_id INTEGER NOT NULL,
+        quantity INTEGER NOT NULL DEFAULT 1,
+        price_per_unit REAL NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (record_id) REFERENCES service_records(id),
+        FOREIGN KEY (part_id) REFERENCES spare_parts(id),
+        CHECK (quantity > 0)
+    )
+    """,
 
             // Таблица платежей
+            """
+    CREATE TABLE IF NOT EXISTS payments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        payment_id TEXT NOT NULL UNIQUE,
+        amount REAL NOT NULL,
+        currency TEXT NOT NULL DEFAULT 'RUB',
+        status TEXT NOT NULL,
+        record_id INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (record_id) REFERENCES service_records(id)
+    )
+    """,
 
-
+            // Индексы для улучшения производительности
+            """
+    CREATE INDEX IF NOT EXISTS idx_service_records_status ON service_records(status)
+    """,
+            """
+    CREATE INDEX IF NOT EXISTS idx_work_schedules_mechanic ON work_schedules(mechanic_id)
+    """,
+            """
+    CREATE INDEX IF NOT EXISTS idx_work_schedules_record ON work_schedules(record_id)
+    """
     };
 
     // Триггеры для обновления временных меток
